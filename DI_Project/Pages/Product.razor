@@ -1,0 +1,61 @@
+﻿@page "/product"
+@using DI_Project.Models
+@inject DI_Project.Interfaces.IProductService productService
+<h3>Product Page</h3>
+<button @onclick="GetAllProducts">Get All Products</button>
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="text" @bind-value="ProdId" placeholder="Enter Id to get product" />&nbsp;
+<button @onclick="GetProduct">Get Product</button><br /><br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Id</th>
+            <th>Product Name</th>
+            <th>Cost </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (lstProducts != null && lstProducts.Count >0)
+        {
+            @foreach (var product in productService.GetAllProducts())
+            {
+                <tr>
+                    <td>@product.Product_Id</td>
+                    <td>@product.Product_Name</td>
+                    <td>@product.Cost</td>
+                </tr>
+            }
+        }
+        @if (product != null && product.Product_Id>0)
+        {
+            <tr>
+                <td>@product.Product_Id</td>
+                <td>@product.Product_Name</td>
+                <td>@product.Cost</td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+@code{
+    public int ProdId { get; set; }
+
+    List<ProductModel> lstProducts = new List<ProductModel>();
+    ProductModel product = new ProductModel();
+
+    private void GetAllProducts()
+    {
+        lstProducts = productService.GetAllProducts().ToList();
+        product = null;
+        this.StateHasChanged();
+    }
+    private void GetProduct()
+    {
+        lstProducts = null;
+        product = productService.GetProductById(ProdId);
+        this.StateHasChanged();
+    }
+}
+
